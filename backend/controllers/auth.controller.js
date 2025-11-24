@@ -1,7 +1,9 @@
 // backend/controllers/auth.controller.js
 import jwt from "jsonwebtoken";
-import User from "../models/User.js"
-import * as authService from "./services/auth.service.js";
+import User from "../models/User.js";
+import * as authService from "../Services/auth.service.js";
+
+
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 

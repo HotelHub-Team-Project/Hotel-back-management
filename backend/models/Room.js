@@ -1,18 +1,12 @@
-// backend/models/Room.js
-import mongoose from "mongoose";
+// models/Room.js
+import mongoose from 'mongoose';
 
-const roomSchema = new mongoose.Schema(
-  {
-    hotel: { type: mongoose.Schema.Types.ObjectId, ref: "Hotel", required: true },
-    name: { type: String, required: true },
-    description: { type: String },
-
-    pricePerNight: { type: Number, required: true },
+const roomSchema = new mongoose.Schema({
+    hotelId: { type: mongoose.Schema.Types.ObjectId, ref: 'Hotel', required: true },
+    name: { type: String, required: true }, // 예: 디럭스 룸
+    price: { type: Number, required: true },
     capacity: { type: Number, required: true },
+    // ... 재고 관련 필드는 나중에 협의
+}, { timestamps: true });
 
-    isAvailable: { type: Boolean, default: true },
-  },
-  { timestamps: true }
-);
-
-export default mongoose.model("Room", roomSchema);
+export default mongoose.model('Room', roomSchema);

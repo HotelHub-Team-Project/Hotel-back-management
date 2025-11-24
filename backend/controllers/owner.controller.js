@@ -1,5 +1,6 @@
 // backend/controllers/owner.controller.js
-import * as ownerService from "./services/owner.service.js";
+import * as ownerService from "../Services/owner.service.js";
+
 
 export const getMyHotels = async (req, res, next) => {
   try {

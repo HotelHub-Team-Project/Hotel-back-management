@@ -1,5 +1,8 @@
 // backend/controllers/admin.controller.js
-import * as adminService from "./services/admin.service.js";
+import * as adminService from "../Services/admin.service.js";
+
+
+
 
 export const getPendingHotels = async (req, res, next) => {
   try {

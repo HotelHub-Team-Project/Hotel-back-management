@@ -1,5 +1,5 @@
-// backend/controllers/upload.controller.js
-import * as uploadService from "./services/upload.service.js";
+import * as uploadService from "../Services/upload.service.js";
+
 
 export const handleHotelImagesUpload = async (req, res, next) => {
   try {

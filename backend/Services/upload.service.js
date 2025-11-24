@@ -1,5 +1,6 @@
-// backend/services/upload.service.js
-import Hotel from "../models/Hotel.js";
+// backend/controllers/upload.controller.js
+import * as uploadService from "../Services/upload.service.js";
+
 
 export const saveHotelImages = async (ownerId, hotelId, files) => {
   const hotel = await Hotel.findOne({ _id: hotelId, owner: ownerId });
