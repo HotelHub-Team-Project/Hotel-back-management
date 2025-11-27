@@ -6,7 +6,7 @@ import {
   updateRoom,
   deleteRoom,
 } from "./controller.js";
-import { verifyToken } from "../common/authMiddleware.js";
+import { verifyToken } from "../common/authmiddleware.js";
 
 const router = Router();
 

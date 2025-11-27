@@ -8,7 +8,7 @@ import {
   approveHotel,
   rejectHotel,
 } from "./controller.js";
-import { verifyToken } from "../common/authMiddleware.js";
+import { verifyToken } from "../common/authmiddleware.js";
 import requireRole from "../common/rolemiddleware.js";
 
 const router = Router();
