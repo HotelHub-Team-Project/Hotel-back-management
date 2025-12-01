@@ -11,6 +11,7 @@ import {
 import { verifyToken } from "../common/authmiddleware.js";
 import requireRole from "../common/rolemiddleware.js";
 
+
 const router = Router();
 
 //
@@ -44,7 +45,7 @@ router.get(
   getPendingHotels
 );
 
-// 호텔 승인
+// ADMIN: 호텔 승인
 router.patch(
   "/admin/:hotelId/approve",
   verifyToken,
@@ -52,7 +53,7 @@ router.patch(
   approveHotel
 );
 
-// 호텔 반려
+// ADMIN: 호텔 반려
 router.patch(
   "/admin/:hotelId/reject",
   verifyToken,
