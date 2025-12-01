@@ -1,19 +1,17 @@
-// user/route.js
 import { Router } from "express";
 import {
-  getMe,
-  updateMe,
-  changePassword,
-  getUsers,
-  updateUserByAdmin,
+  getMe,
+  updateMe,
+  changePassword,
+  getUsers,
+  updateUserByAdmin,
 } from "./controller.js";
-import { verifyToken } from "../common/authmiddleware.js";
-import requireRole from "../common/rolemiddleware.js";
+import { verifyToken, requireRole } from "../common/authmiddleware.js";
 
 
 const router = Router();
 
-// 내 정보
+// 내 정보 (User, Owner, Admin 공통)
 router.get("/me", verifyToken, getMe);
 router.put("/me", verifyToken, updateMe);
 router.put("/me/password", verifyToken, changePassword);
