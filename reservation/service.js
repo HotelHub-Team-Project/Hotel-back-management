@@ -3,46 +3,131 @@ import Reservation from "./model.js";
 import Hotel from "../hotel/model.js";
 
 // 🔹 ADMIN: 전체 예약 조회 (옵션 status 필터)
-export const getAdminReservations = async ({ status }) => {
+// ⬇⬇ reservation/service.js 안의 getAdminReservations 전체를 이걸로 교체 ⬇⬇
+export const getAdminReservations = async ({
+  status,
+  hotelId,
+  startDate,
+  endDate,
+  page = 1,
+  limit = 20,
+}) => {
   const filter = {};
+
+  // 상태 필터
   if (status) {
     filter.status = status;
   }
 
-  const reservations = await Reservation.find(filter)
-    .populate("userId", "name email")   // 손님 정보
-    .populate("hotelId", "name city")   // 호텔 정보
-    .populate("roomId", "roomNumber")   // 방 정보 (필드명은 모델에 맞게)
-    .sort({ createdAt: -1 });
-
-  return reservations;
-};
-
-// 🔹 OWNER: 내 호텔들에 대한 예약만 조회
-export const getOwnerReservations = async ({ ownerId, status }) => {
-  // 1️⃣ 오너가 가진 호텔들 ID 목록 가져오기
-  const hotels = await Hotel.find({ owner: ownerId }).select("_id");
-  const hotelIds = hotels.map((h) => h._id);
-
-  if (hotelIds.length === 0) {
-    // 내 호텔이 하나도 없으면 예약도 없음
-    return [];
+  // 특정 호텔 필터
+  if (hotelId) {
+    filter.hotelId = hotelId;
   }
 
-  // 2️⃣ 그 호텔들에 대한 예약만 조회
-  const filter = { hotelId: { $in: hotelIds } };
-  if (status) {
-    filter.status = status;
+  // 날짜 필터 (createdAt 기준)
+  if (startDate || endDate) {
+    filter.createdAt = {};
+    if (startDate) {
+      filter.createdAt.$gte = new Date(startDate);
+    }
+    if (endDate) {
+      filter.createdAt.$lte = new Date(endDate);
+    }
   }
+
+  const pageNumber = Number(page) || 1;
+  const limitNumber = Number(limit) || 20;
+  const skip = (pageNumber - 1) * limitNumber;
+
+  const total = await Reservation.countDocuments(filter);
 
   const reservations = await Reservation.find(filter)
     .populate("userId", "name email")
     .populate("hotelId", "name city")
     .populate("roomId", "roomNumber")
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitNumber);
 
-  return reservations;
+  return {
+    items: reservations,
+    total,
+    page: pageNumber,
+    limit: limitNumber,
+    totalPages: Math.ceil(total / limitNumber),
+  };
 };
+// ⬆⬆ getAdminReservations 교체 끝 ⬆⬆
+
+
+// 🔹 OWNER: 내 호텔들에 대한 예약만 조회
+// ⬇⬇ reservation/service.js 안의 getOwnerReservations 전체를 이걸로 교체 ⬇⬇
+export const getOwnerReservations = async ({
+  ownerId,
+  status,
+  startDate,
+  endDate,
+  page = 1,
+  limit = 20,
+}) => {
+  // 1️⃣ 이 오너가 가진 호텔들 찾기
+  const hotels = await Hotel.find({ owner: ownerId }).select("_id");
+  const hotelIds = hotels.map((h) => h._id);
+
+  if (hotelIds.length === 0) {
+    const pageNumber = Number(page) || 1;
+    const limitNumber = Number(limit) || 20;
+
+    return {
+      items: [],
+      total: 0,
+      page: pageNumber,
+      limit: limitNumber,
+      totalPages: 0,
+    };
+  }
+
+  // 2️⃣ 그 호텔들에 대한 예약만 조회
+  const filter = { hotelId: { $in: hotelIds } };
+
+  if (status) {
+    filter.status = status;
+  }
+
+  if (startDate || endDate) {
+    filter.createdAt = {};
+    if (startDate) {
+      filter.createdAt.$gte = new Date(startDate);
+    }
+    if (endDate) {
+      filter.createdAt.$lte = new Date(endDate);
+    }
+  }
+
+  const pageNumber = Number(page) || 1;
+  const limitNumber = Number(limit) || 20;
+  const skip = (pageNumber - 1) * limitNumber;
+
+  const total = await Reservation.countDocuments(filter);
+
+  const reservations = await Reservation.find(filter)
+    .populate("userId", "name email")
+    .populate("hotelId", "name city")
+    .populate("roomId", "roomNumber")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitNumber);
+
+  return {
+    items: reservations,
+    total,
+    page: pageNumber,
+    limit: limitNumber,
+    totalPages: Math.ceil(total / limitNumber),
+  };
+};
+// ⬆⬆ getOwnerReservations 교체 끝 ⬆⬆
+
 
 // 🔹 ADMIN / OWNER: 예약 상태 변경
 export const updateReservationStatus = async ({ reservationId, status }) => {

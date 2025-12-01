@@ -7,10 +7,26 @@ import {
 } from "./service.js";
 
 // 🔹 ADMIN: 전체 예약 조회
+// ⬇⬇ reservation/controller.js 안의 getReservationsForAdmin 전체를 이걸로 교체 ⬇⬇
 export const getReservationsForAdmin = async (req, res) => {
   try {
-    const { status } = req.query; // ?status=pending 이런 식으로 필터 가능
-    const data = await getAdminReservations({ status });
+    const {
+      status,
+      hotelId,
+      startDate,
+      endDate,
+      page = 1,
+      limit = 20,
+    } = req.query;
+
+    const data = await getAdminReservations({
+      status,
+      hotelId,
+      startDate,
+      endDate,
+      page,
+      limit,
+    });
 
     return res
       .status(200)
@@ -19,17 +35,38 @@ export const getReservationsForAdmin = async (req, res) => {
     console.error(err);
     return res
       .status(400)
-      .json(errorResponse(err.message || "RESERVATION_ADMIN_LIST_FAILED", 400));
+      .json(
+        errorResponse(
+          err.message || "RESERVATION_ADMIN_LIST_FAILED",
+          400
+        )
+      );
   }
 };
+// ⬆⬆ getReservationsForAdmin 교체 끝 ⬆⬆
+
 
 // 🔹 OWNER: 내 호텔들 예약 조회
+// ⬇⬇ reservation/controller.js 안의 getReservationsForOwner 전체를 이걸로 교체 ⬇⬇
 export const getReservationsForOwner = async (req, res) => {
   try {
-    const { status } = req.query;
-    const ownerId = req.user.id; // JWT에서 들어온 내 userId
+    const {
+      status,
+      startDate,
+      endDate,
+      page = 1,
+      limit = 20,
+    } = req.query;
+    const ownerId = req.user.id; // 토큰에서 가져온 owner id
 
-    const data = await getOwnerReservations({ ownerId, status });
+    const data = await getOwnerReservations({
+      ownerId,
+      status,
+      startDate,
+      endDate,
+      page,
+      limit,
+    });
 
     return res
       .status(200)
@@ -38,9 +75,16 @@ export const getReservationsForOwner = async (req, res) => {
     console.error(err);
     return res
       .status(400)
-      .json(errorResponse(err.message || "RESERVATION_OWNER_LIST_FAILED", 400));
+      .json(
+        errorResponse(
+          err.message || "RESERVATION_OWNER_LIST_FAILED",
+          400
+        )
+      );
   }
 };
+// ⬆⬆ getReservationsForOwner 교체 끝 ⬆⬆
+
 
 // 🔹 ADMIN / OWNER: 예약 상태 변경
 export const patchReservationStatus = async (req, res) => {
