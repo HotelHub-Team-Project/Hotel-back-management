@@ -1,11 +1,23 @@
 import { Router } from "express";
-import { verifyToken } from "../common/authmiddleware.js";
+import {
+  getMe,
+  updateMe,
+  changePassword,
+  getUsers,
+  updateUserByAdmin,
+} from "./controller.js";
+import { verifyToken, requireRole } from "../common/authmiddleware.js";
+
 
 const router = Router();
 
-// 필요한 user 관련 라우트를 여기에 추가하세요
-router.get("/", verifyToken, (req, res) => {
-  res.json({ success: true, message: "User routes" });
-});
+// 내 정보 (User, Owner, Admin 공통)
+router.get("/me", verifyToken, getMe);
+router.put("/me", verifyToken, updateMe);
+router.put("/me/password", verifyToken, changePassword);
+
+// 관리자 전용
+router.get("/admin", verifyToken, requireRole("admin"), getUsers);
+router.put("/admin/:userId", verifyToken, requireRole("admin"), updateUserByAdmin);
 
 export default router;

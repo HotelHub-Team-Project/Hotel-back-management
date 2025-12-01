@@ -1,12 +1,12 @@
-// room/route.js
 import { Router } from "express";
 import {
-  getRoomsByHotel,
-  createRoom,
-  updateRoom,
-  deleteRoom,
+  getRoomsByHotel,
+  createRoom,
+  updateRoom,
+  deleteRoom,
 } from "./controller.js";
 import { verifyToken } from "../common/authmiddleware.js";
+
 
 const router = Router();
 
